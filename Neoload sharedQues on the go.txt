@@ -1,0 +1,71 @@
+Creating SharedQue in JavaScript.txt
+Details
+Activity
+EARLIER THIS YEAR
+
+You uploaded an item
+Aug 18
+Text
+Creating SharedQue in JavaScript.txt
+No recorded activity before August 18, 2016
+
+
+//read the contents of the csv file
+//count the number of rows &
+//add the amounts in the last column as sumTotal
+    var file = context.variableManager.getValue("BDReg_BatchFiles.FileName");
+    var path = context.variableManager.getValue("NL-CustomResources");
+    //logger.debug("File Path="+path);
+    //logger.debug("File Name="+file);
+     
+    var fileName = path+"//"+file+"";
+    var fileReader = new java.io.BufferedReader(new java.io.FileReader(fileName) );
+    var delimiter = ",";
+    var rowCount = 0;
+    var sumTotal = 0.0;
+    context.variableManager.createSharedQueue("MyQueue",100,1000)  ;                      
+    
+    //var AccID = [];
+    
+    while( (line = fileReader.readLine()) != null ){
+            
+            var tokens = line.split(delimiter);
+            sumTotal = sumTotal + parseFloat( tokens[tokens.length-1] );
+            //logger.debug(tokens[tokens.length-8]);
+            //AccID.push(tokens[tokens.length-8]);
+            //logger.debug(AccID[rowCount]);
+           context.variableManager.addSharedValue("MyQueue",tokens[tokens.length-8]); 
+            rowCount++;
+        }
+
+    var qSize = context.variableManager.getSharedQueueSize("MyQueue");
+    logger.debug("Items in Q "+qSize);
+        
+    //var ID = context.variableManager.getValue("MyQueue");
+    //logger.debug("Account ID "+ID);
+
+      
+    sumTotal=sumTotal.toFixed(2);
+    
+    logger.debug("number of rows is " + rowCount);
+    logger.debug("Amount value is " + sumTotal);
+    
+    context.variableManager.setValue("csvFileRowCount", rowCount);
+    context.variableManager.setValue("csvFileSumTotal", sumTotal);
+    
+    RandomAccountNumber();
+    BSB = "012-468"
+    context.variableManager.setValue("FileBSB", BSB);
+    
+    //var FileAccID = [];
+    //context.variableManager.setValue("FileAccID",AccID);
+
+
+
+
+
+
+READING SHARED QUE
+
+var AccID2 = context.variableManager.getValue("MyQueue");
+context.variableManager.setValue("AccID",AccID2);
